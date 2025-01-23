@@ -1,5 +1,3 @@
-const API_URL = "https://api.open-meteo.com/v1/forecast?latitude={lat}&longitude={lon}&hourly=temperature_2m,precipitation,weathercode&timezone=auto";
-
 async function getWeather() {
     const city = document.getElementById("city").value;
     if (!city) {
@@ -17,8 +15,8 @@ async function getWeather() {
         }
 
         const { latitude, longitude } = geoData.results[0];
-
-        const response = await fetch(API_URL.replace("{lat}", latitude).replace("{lon}", longitude));
+        const API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation,weathercode&timezone=auto`;
+        const response = await fetch(API_URL);
         const data = await response.json();
 
         displayForecast(data.hourly);
@@ -31,6 +29,11 @@ async function getWeather() {
 function displayForecast(hourlyData) {
     const forecastDiv = document.getElementById("forecast");
     forecastDiv.innerHTML = "";
+
+    if (!hourlyData || !hourlyData.time || !hourlyData.temperature_2m || !hourlyData.precipitation || !hourlyData.weathercode) {
+        forecastDiv.innerHTML = "<p class='text-center'>Nessuna previsione disponibile.</p>";
+        return;
+    }
 
     const hours = hourlyData.time;
     const temperatures = hourlyData.temperature_2m;
@@ -57,29 +60,41 @@ function displayForecast(hourlyData) {
         96: "Temporale con grandine"
     };
 
-    const groupedData = {};
+    const groupedByWeek = {};
+    const today = new Date();
+
     for (let i = 0; i < hours.length; i++) {
-        const date = new Date(hours[i]).toLocaleDateString("it-IT");
-        const time = new Date(hours[i]).toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" });
+        const date = new Date(hours[i]);
+        if (!hours[i] || !temperatures[i] || !precipitations[i] || weatherCodes[i] === undefined) continue;
 
-        if (!groupedData[date]) {
-            groupedData[date] = [];
-        }
+        const weekDay = date.toLocaleDateString("it-IT", { weekday: "long" });
+        const isToday = date.getDate() === today.getDate() &&
+                        date.getMonth() === today.getMonth() &&
+                        date.getFullYear() === today.getFullYear();
 
-        groupedData[date].push({
-            time,
+        const groupKey = isToday ? "Oggi" : capitalizeFirstLetter(weekDay);
+
+        if (!groupedByWeek[groupKey]) groupedByWeek[groupKey] = [];
+
+        groupedByWeek[groupKey].push({
+            time: date.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" }),
             temperature: temperatures[i],
             precipitation: precipitations[i],
             weatherDescription: weatherDescriptions[weatherCodes[i]] || "Condizioni sconosciute"
         });
     }
 
-    for (const [date, data] of Object.entries(groupedData)) {
+    if (Object.keys(groupedByWeek).length === 0) {
+        forecastDiv.innerHTML = "<p class='text-center'>Nessuna previsione disponibile.</p>";
+        return;
+    }
+
+    for (const [weekDay, data] of Object.entries(groupedByWeek)) {
         const dayDiv = document.createElement("div");
         dayDiv.classList.add("mb-4");
 
         dayDiv.innerHTML = `
-            <h3>${date}</h3>
+            <h3>${weekDay}</h3>
             <table class="table table-striped table-bordered">
                 <thead>
                     <tr>
@@ -104,4 +119,8 @@ function displayForecast(hourlyData) {
 
         forecastDiv.appendChild(dayDiv);
     }
+}
+
+function capitalizeFirstLetter(string) {
+    return string.charAt(0).toUpperCase() + string.slice(1).toLowerCase();
 }
