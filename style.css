@@ -1,23 +1,36 @@
+/* Stile generale per la pagina */
 body {
     background: linear-gradient(to bottom, #83a4d4, #b6fbff);
     font-family: 'Roboto', sans-serif;
+    margin: 0;
+    padding: 0;
 }
 
+/* Contenitore principale */
 .container {
     background: white;
     border-radius: 15px;
     padding: 20px;
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-    max-width: 700px;
+    max-width: 800px;
     margin: 50px auto;
 }
 
+/* Titolo principale */
 h1 {
     color: #4a90e2;
     font-size: 2.5rem;
     margin-bottom: 20px;
 }
 
+/* Paragrafo di istruzioni */
+p {
+    font-size: 1rem;
+    color: #555;
+    margin-bottom: 15px;
+}
+
+/* Stile per input e bottone */
 .input-group input {
     border: 2px solid #4a90e2;
     border-radius: 8px;
@@ -39,12 +52,63 @@ h1 {
     background-color: #357abd;
 }
 
-table {
-    width: 100%;
-    margin-top: 20px;
+/* Contenitori delle previsioni */
+.forecast-container {
+    background: #ffffff;
+    border: 2px solid #4a90e2;
+    border-radius: 10px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 3px 10px rgba(0, 0, 0, 0.1);
 }
 
-table th {
-    background-color: #4a90e2;
-    color: white;
+/* Griglia delle previsioni settimanali */
+#weekly-forecast .week-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: 15px;
+}
+
+/* Nascondi gli elementi */
+.d-none {
+    display: none !important;
+}
+/* Contenitore principale della timeline */
+.timeline-container {
+    overflow-x: auto;
+    white-space: nowrap;
+    margin-top: 15px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid #4a90e2;
+}
+
+/* Stile per la timeline oraria */
+.timeline {
+    display: flex;
+    gap: 10px;
+}
+
+/* Singolo elemento orario */
+.hour-item {
+    display: inline-block;
+    min-width: 80px;
+    text-align: center;
+    padding: 10px;
+    background-color: #f9f9f9;
+    border: 1px solid #ddd;
+    border-radius: 8px;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+}
+
+/* Stile per l'orario e il meteo all'interno dei container */
+.hour-time {
+    font-size: 1rem;
+    font-weight: bold;
+    margin-bottom: 5px;
+    color: #4a90e2;
+}
+
+.hour-weather {
+    font-size: 0.9rem;
+    color: #555;
 }
