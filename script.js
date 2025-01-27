@@ -1,5 +1,19 @@
+
 // Ottimizzazione del codice JavaScript
 const weatherCache = new Map();
+
+document.addEventListener("DOMContentLoaded", () => {
+    // Mostra l'ora corrente
+    const currentTimeElement = document.getElementById("current-time");
+    setInterval(() => {
+        const now = new Date();
+        currentTimeElement.textContent = now.toLocaleTimeString("it-IT", {
+            hour: "2-digit",
+            minute: "2-digit",
+            second: "2-digit"
+        });
+    }, 1000);
+});
 
 async function getWeather() {
     const city = document.getElementById("city").value.trim().toLowerCase();
