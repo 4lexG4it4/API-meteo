@@ -121,7 +121,7 @@ function displayWeeklyForecast(dailyData) {
 
     const weekCards = weekDays.map(day => `
         <div class='day-card'>
-            <h3>${day.day}</h3>
+            <h3 style='color: #007bff;'>${day.day}</h3>
             <p>Min: ${day.minTemp}°C</p>
             <p>Max: ${day.maxTemp}°C</p>
         </div>`).join('');

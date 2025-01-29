@@ -5,6 +5,12 @@ body {
     margin: 0;
     padding: 0;
     color: #333;
+    height: 150vh;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    display: flex;
+    flex-direction: column;
 }
 
 /* Contenitore principale */
@@ -36,7 +42,7 @@ h1 {
 /* Paragrafo di istruzioni */
 p {
     font-size: 1rem;
-    color: #555;
+    color: #000000;
     margin-bottom: 15px;
 }
 
@@ -134,4 +140,13 @@ footer {
     font-size: 0.9rem;
     text-align: center;
     color: #666;
+}
+
+.day-card {
+    padding: 1rem;
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+    border: 1px solid #ddd;
+    background-color: #f9f9f9;
+    border-radius: 1rem;
+    text-align: center;
 }
