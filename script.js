@@ -1,9 +1,6 @@
-
-// Ottimizzazione del codice JavaScript
 const weatherCache = new Map();
 
 document.addEventListener("DOMContentLoaded", () => {
-    // Mostra l'ora corrente
     const currentTimeElement = document.getElementById("current-time");
     setInterval(() => {
         const now = new Date();
@@ -23,7 +20,7 @@ async function getWeather() {
     }
 
     const forecastContainers = document.getElementById("forecast-containers");
-    forecastContainers.classList.add("d-none"); // Nascondi i container inizialmente
+    forecastContainers.classList.add("d-none"); 
 
     if (weatherCache.has(city)) {
         displayForecast(weatherCache.get(city));
@@ -31,15 +28,31 @@ async function getWeather() {
     }
 
     try {
-        const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}`);
-        const geoData = await geoResponse.json();
+        // 1. Ottieni coordinate da OpenStreetMap
+        const osmResponse = await fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${city}`);
+        const osmData = await osmResponse.json();
 
-        if (!geoData.results || !geoData.results.length) {
-            alert("Città non trovata. Riprova con un altro nome.");
-            return;
+        let latitude, longitude;
+
+        if (osmData.length > 0) {
+            latitude = osmData[0].lat;
+            longitude = osmData[0].lon;
+        } else {
+            // Se OSM non trova nulla, usa Open-Meteo
+            console.warn("OSM non ha trovato la città, si prova con Open-Meteo.");
+            const geoResponse = await fetch(`https://geocoding-api.open-meteo.com/v1/search?name=${city}`);
+            const geoData = await geoResponse.json();
+
+            if (!geoData.results || !geoData.results.length) {
+                alert("Città non trovata. Riprova con un altro nome.");
+                return;
+            }
+
+            latitude = geoData.results[0].latitude;
+            longitude = geoData.results[0].longitude;
         }
 
-        const { latitude, longitude } = geoData.results[0];
+        // 2. Richiedi previsioni meteo
         const API_URL = `https://api.open-meteo.com/v1/forecast?latitude=${latitude}&longitude=${longitude}&hourly=temperature_2m,precipitation,weathercode&daily=temperature_2m_min,temperature_2m_max,weathercode&timezone=auto`;
         const response = await fetch(API_URL);
         const data = await response.json();
@@ -54,7 +67,7 @@ async function getWeather() {
 
 function displayForecast(data) {
     const forecastContainers = document.getElementById("forecast-containers");
-    forecastContainers.classList.remove("d-none"); // Mostra i container
+    forecastContainers.classList.remove("d-none");
 
     displayTodayForecast(data.hourly);
     displayWeeklyForecast(data.daily);
